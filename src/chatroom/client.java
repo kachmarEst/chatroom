@@ -1,49 +1,68 @@
-package chatroom;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package socket1;
 
-import java.io.BufferedReader;
+/**
+ *
+ * @author oyhiuiu
+ */
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class client {
-public static int i;
+import javafx.application.Platform;
 
-public static void main(String[] args) throws Exception {
-
-
-    Scanner msg = new Scanner(System.in);
-        Socket socket = new Socket(InetAddress.getLocalHost(), 4020);
-        System.out.println(socket);
-
-    DataInputStream dis = new DataInputStream(socket.getInputStream());
-    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-
-    while (true){
-            System.out.println(dis.readUTF());
-            System.out.println("Entre votre message: ");
-            String message = msg.nextLine();
-                    dos.writeUTF(message);
-        if(message.equals("close"))
-        {
-            System.out.println("Closing connection : " + socket+"....");
-            socket.close();
-            System.out.println("closed");
-            break;
-        }
-        
-
-            String received = dis.readUTF();
-            System.out.println(received);
-        }
+public class client extends Thread{
+	
+	DataInputStream dis = null;
+	chat client;
+	public client(DataInputStream dis,chat client) {
+		this.dis = dis;
+		this.client = client;
+	}
+	
+	public void run() {
+		while(true) {
+			try {
+				while(dis.available()==0) { 
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {e.printStackTrace();}
+				}
+				String Message = dis.readUTF();
+				client.addMessageToScreen(Message);
+								
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	};
 }
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
